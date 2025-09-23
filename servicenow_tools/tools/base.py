@@ -43,7 +43,7 @@ class ServiceNowTool(Tool):
     
     def __init__(self, name, description, content, args=None, image="python:3.11-slim"):
         # ServiceNow API setup and common imports
-        servicenow_setup = """
+        servicenow_setup = """#!/usr/bin/env python3
 import requests
 import json
 import os
@@ -110,7 +110,7 @@ def format_output(data, title="ServiceNow API Response"):
             icon_url=SERVICENOW_ICON_URL,
             type="docker",
             env=["SERVICENOW_INSTANCE", "SERVICENOW_USERNAME"],
-            secrets=["SERVICENOW_PASSWORD"]
+            secrets=["SERVICENOW_PASSWORD"],
         )
 
     def get_args(self) -> List[Arg]:

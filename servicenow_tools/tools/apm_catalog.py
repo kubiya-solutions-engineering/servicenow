@@ -1,114 +1,76 @@
-from typing import List
+import inspect
 import sys
-from servicenow_tools.tools.base import ServiceNowTool, Arg
+from pathlib import Path
+
+# Add the project root to Python path
+project_root = str(Path(__file__).resolve().parents[2])
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+from kubiya_sdk.tools.models import Arg, FileSpec, Volume
 from kubiya_sdk.tools.registry import tool_registry
 
-class APMCatalogTool(ServiceNowTool):
-    """Tool to query ServiceNow APM catalog for applications and services."""
-    
-    def __init__(self):
-        super().__init__(
-            name="servicenow_apm_catalog_query",
-            description="Query ServiceNow APM catalog to match applications/services by name or identifier",
-            content="""
-# APM Catalog Query Tool
-search_term = os.getenv('search_term', '')
+from .base import ServiceNowTool
 
-if not search_term:
-    print("Error: search_term parameter is required")
-    sys.exit(1)
+# Read the APM catalog script content directly from file
+scripts_dir = Path(__file__).resolve().parents[2] / "scripts"
+with open(scripts_dir / "apm_catalog.py", "r") as f:
+    script_content = f.read()
 
-print(f"Searching APM catalog for: {search_term}")
-print("")
+# Define the tool before any potential imports can occur
+apm_catalog_tool = ServiceNowTool(
+    name="servicenow_apm_catalog_query",
+    description="Query ServiceNow APM catalog to match applications/services by name or identifier",
+    content="""
+    set -e
+    python -m venv /opt/venv > /dev/null
+    . /opt/venv/bin/activate > /dev/null
+    pip install requests==2.32.3 2>&1 | grep -v '[notice]'
 
-# Query APM Application table
-print("=== Searching APM Applications ===")
-app_params = {
-    'sysparm_query': f'nameLIKE{search_term}^ORshort_descriptionLIKE{search_term}^ORsys_id={search_term}',
-    'sysparm_fields': 'sys_id,name,short_description,state,operational_status,owner,assigned_to',
-    'sysparm_limit': 50
-}
+    # Run the APM catalog script
+    python /opt/scripts/apm_catalog.py
+    """,
+    args=[
+        Arg(
+            name="search_term",
+            description="Term to search for in APM catalog (application name, service name, or sys_id)",
+            required=True,
+        ),
+    ],
+    env=[
+        "SERVICENOW_INSTANCE",
+        "SERVICENOW_USERNAME",
+    ],
+    secrets=[
+        "SERVICENOW_PASSWORD",
+    ],
+    with_files=[
+        FileSpec(
+            destination="/opt/scripts/apm_catalog.py",
+            content=script_content,
+        ),
+    ],
+    long_running=False,
+    mermaid="""
+    sequenceDiagram
+        participant A as Agent
+        participant S as ServiceNow
+        participant APM as APM Catalog
 
-try:
-    app_results = make_request('table/apm_application', app_params)
-    if app_results.get('result'):
-        print(f"Found {len(app_results['result'])} applications:")
-        for app in app_results['result']:
-            print(f"  - {app.get('name', 'N/A')} (ID: {app.get('sys_id', 'N/A')})")
-            print(f"    Description: {app.get('short_description', 'N/A')}")
-            print(f"    State: {app.get('state', 'N/A')}, Status: {app.get('operational_status', 'N/A')}")
-            print(f"    Owner: {app.get('owner', 'N/A')}")
-            print("")
-    else:
-        print("No applications found")
-except Exception as e:
-    print(f"Error querying applications: {str(e)}")
+        A ->> S: Query APM Catalog
+        S ->> APM: Search Applications
+        S ->> APM: Search Services
+        S ->> APM: Search Components
+        APM -->> S: Return Results
+        S -->> A: Application Data
+    """,
+)
 
-# Query APM Service table
-print("=== Searching APM Services ===")
-service_params = {
-    'sysparm_query': f'nameLIKE{search_term}^ORshort_descriptionLIKE{search_term}^ORsys_id={search_term}',
-    'sysparm_fields': 'sys_id,name,short_description,state,operational_status,owner,assigned_to,application',
-    'sysparm_limit': 50
-}
+# Register the tool
+tool_registry.register("servicenow", apm_catalog_tool)
 
-try:
-    service_results = make_request('table/apm_service', service_params)
-    if service_results.get('result'):
-        print(f"Found {len(service_results['result'])} services:")
-        for service in service_results['result']:
-            print(f"  - {service.get('name', 'N/A')} (ID: {service.get('sys_id', 'N/A')})")
-            print(f"    Description: {service.get('short_description', 'N/A')}")
-            print(f"    State: {service.get('state', 'N/A')}, Status: {service.get('operational_status', 'N/A')}")
-            print(f"    Owner: {service.get('owner', 'N/A')}")
-            print(f"    Application: {service.get('application', 'N/A')}")
-            print("")
-    else:
-        print("No services found")
-except Exception as e:
-    print(f"Error querying services: {str(e)}")
+# Export the tool
+__all__ = ["apm_catalog_tool"]
 
-# Query APM Component table
-print("=== Searching APM Components ===")
-component_params = {
-    'sysparm_query': f'nameLIKE{search_term}^ORshort_descriptionLIKE{search_term}^ORsys_id={search_term}',
-    'sysparm_fields': 'sys_id,name,short_description,state,operational_status,owner,assigned_to,application,service',
-    'sysparm_limit': 50
-}
-
-try:
-    component_results = make_request('table/apm_component', component_params)
-    if component_results.get('result'):
-        print(f"Found {len(component_results['result'])} components:")
-        for component in component_results['result']:
-            print(f"  - {component.get('name', 'N/A')} (ID: {component.get('sys_id', 'N/A')})")
-            print(f"    Description: {component.get('short_description', 'N/A')}")
-            print(f"    State: {component.get('state', 'N/A')}, Status: {component.get('operational_status', 'N/A')}")
-            print(f"    Owner: {component.get('owner', 'N/A')}")
-            print(f"    Application: {component.get('application', 'N/A')}")
-            print(f"    Service: {component.get('service', 'N/A')}")
-            print("")
-    else:
-        print("No components found")
-except Exception as e:
-    print(f"Error querying components: {str(e)}")
-
-print("=== APM Catalog Search Complete ===")
-""",
-            args=[
-                Arg(
-                    name="search_term", 
-                    description="Term to search for in APM catalog (application name, service name, or sys_id)", 
-                    required=True
-                )
-            ]
-        )
-
-# Self-register the tool
-try:
-    tool = APMCatalogTool()
-    tool_registry.register("servicenow", tool)
-    print(f"✅ Registered: {tool.name}")
-except Exception as e:
-    print(f"❌ Failed to register APM Catalog tool: {str(e)}", file=sys.stderr)
-    raise
+# Make sure the tool is available at module level
+globals()["apm_catalog_tool"] = apm_catalog_tool
