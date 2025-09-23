@@ -37,13 +37,12 @@ python /opt/scripts/cmdb_query.py "{{ .application_id }}"
             required=True,
         ),
     ],
-    with_files=[
-        FileSpec(
-            destination="/opt/scripts/cmdb_query.py",
-            content=script_content,
-        ),
-    ],
-    long_running=False,
+            with_files=[
+                FileSpec(
+                    destination="/opt/scripts/cmdb_query.py",
+                    content=script_content,
+                ),
+            ],
     mermaid="""
     sequenceDiagram
         participant A as Agent

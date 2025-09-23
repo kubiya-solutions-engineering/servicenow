@@ -37,13 +37,12 @@ python /opt/scripts/apm_catalog.py "{{ .search_term }}"
             required=True,
         ),
     ],
-    with_files=[
-        FileSpec(
-            destination="/opt/scripts/apm_catalog.py",
-            content=script_content,
-        ),
-    ],
-    long_running=False,
+            with_files=[
+                FileSpec(
+                    destination="/opt/scripts/apm_catalog.py",
+                    content=script_content,
+                ),
+            ],
     mermaid="""
     sequenceDiagram
         participant A as Agent

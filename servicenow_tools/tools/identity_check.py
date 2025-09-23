@@ -37,13 +37,12 @@ python /opt/scripts/identity_check.py "{{ .user_identifier }}"
             required=True,
         ),
     ],
-    with_files=[
-        FileSpec(
-            destination="/opt/scripts/identity_check.py",
-            content=script_content,
-        ),
-    ],
-    long_running=False,
+            with_files=[
+                FileSpec(
+                    destination="/opt/scripts/identity_check.py",
+                    content=script_content,
+                ),
+            ],
     mermaid="""
     sequenceDiagram
         participant A as Agent
