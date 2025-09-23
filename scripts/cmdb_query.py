@@ -75,7 +75,7 @@ app_params = {
 }
 
 try:
-    app_results = make_request('table/cmdb_ci_appl', app_params)
+    app_results = make_request('table/sn_apm_cm_application', app_params)
     if not app_results.get('result'):
         print(f"❌ Application not found: {application_id}")
         print("💡 Suggestions:")
