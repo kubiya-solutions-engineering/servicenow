@@ -43,20 +43,6 @@ python /opt/scripts/identity_check.py "{{ .user_identifier }}"
                     content=script_content,
                 ),
             ],
-    mermaid="""
-    sequenceDiagram
-        participant A as Agent
-        participant S as ServiceNow
-        participant U as User System
-
-        A ->> S: Check User Identity
-        S ->> U: Query User Record
-        S ->> U: Query User Roles
-        S ->> U: Query Group Memberships
-        S ->> U: Query Entitlements
-        U -->> S: Return User Data
-        S -->> A: Identity Information
-    """,
 )
 
 # Register the tool

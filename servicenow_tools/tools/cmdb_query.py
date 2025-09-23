@@ -43,20 +43,6 @@ python /opt/scripts/cmdb_query.py "{{ .application_id }}"
                     content=script_content,
                 ),
             ],
-    mermaid="""
-    sequenceDiagram
-        participant A as Agent
-        participant S as ServiceNow
-        participant C as CMDB
-        participant AWS as AWS
-
-        A ->> S: Query CMDB for Application
-        S ->> C: Find Application
-        S ->> C: Query Server Relationships
-        S ->> C: Query AWS Instances
-        C -->> S: Return Server Data
-        S -->> A: Server Information
-    """,
 )
 
 # Register the tool

@@ -43,19 +43,6 @@ python /opt/scripts/apm_catalog.py "{{ .search_term }}"
                     content=script_content,
                 ),
             ],
-    mermaid="""
-    sequenceDiagram
-        participant A as Agent
-        participant S as ServiceNow
-        participant APM as APM Catalog
-
-        A ->> S: Query APM Catalog
-        S ->> APM: Search Applications
-        S ->> APM: Search Services
-        S ->> APM: Search Components
-        APM -->> S: Return Results
-        S -->> A: Application Data
-    """,
 )
 
 # Register the tool
