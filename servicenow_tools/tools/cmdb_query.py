@@ -37,13 +37,6 @@ cmdb_query_tool = ServiceNowTool(
             required=True,
         ),
     ],
-    env=[
-        "SERVICENOW_INSTANCE",
-        "SERVICENOW_USERNAME",
-    ],
-    secrets=[
-        "SERVICENOW_PASSWORD",
-    ],
     with_files=[
         FileSpec(
             destination="/opt/scripts/cmdb_query.py",
@@ -69,9 +62,3 @@ cmdb_query_tool = ServiceNowTool(
 
 # Register the tool
 tool_registry.register("servicenow", cmdb_query_tool)
-
-# Export the tool
-__all__ = ["cmdb_query_tool"]
-
-# Make sure the tool is available at module level
-globals()["cmdb_query_tool"] = cmdb_query_tool

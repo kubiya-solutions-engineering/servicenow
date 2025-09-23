@@ -37,13 +37,6 @@ identity_check_tool = ServiceNowTool(
             required=True,
         ),
     ],
-    env=[
-        "SERVICENOW_INSTANCE",
-        "SERVICENOW_USERNAME",
-    ],
-    secrets=[
-        "SERVICENOW_PASSWORD",
-    ],
     with_files=[
         FileSpec(
             destination="/opt/scripts/identity_check.py",
@@ -69,9 +62,3 @@ identity_check_tool = ServiceNowTool(
 
 # Register the tool
 tool_registry.register("servicenow", identity_check_tool)
-
-# Export the tool
-__all__ = ["identity_check_tool"]
-
-# Make sure the tool is available at module level
-globals()["identity_check_tool"] = identity_check_tool

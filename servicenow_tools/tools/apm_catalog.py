@@ -37,13 +37,6 @@ apm_catalog_tool = ServiceNowTool(
             required=True,
         ),
     ],
-    env=[
-        "SERVICENOW_INSTANCE",
-        "SERVICENOW_USERNAME",
-    ],
-    secrets=[
-        "SERVICENOW_PASSWORD",
-    ],
     with_files=[
         FileSpec(
             destination="/opt/scripts/apm_catalog.py",
@@ -68,9 +61,3 @@ apm_catalog_tool = ServiceNowTool(
 
 # Register the tool
 tool_registry.register("servicenow", apm_catalog_tool)
-
-# Export the tool
-__all__ = ["apm_catalog_tool"]
-
-# Make sure the tool is available at module level
-globals()["apm_catalog_tool"] = apm_catalog_tool
