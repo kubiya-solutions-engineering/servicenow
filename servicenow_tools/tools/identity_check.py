@@ -1,6 +1,6 @@
 from typing import List
 import sys
-from .base import ServiceNowTool, Arg
+from .base import ServiceNowTool, IdentityCheckTool, Arg
 from kubiya_sdk.tools.registry import tool_registry
 
 class IdentityCheckTool(ServiceNowTool):
