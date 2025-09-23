@@ -22,14 +22,14 @@ identity_check_tool = ServiceNowTool(
     name="servicenow_identity_check",
     description="Check user's identity (via email or Teams) against ServiceNow roles and entitlement tables",
     content="""
-    set -e
-    python -m venv /opt/venv > /dev/null
-    . /opt/venv/bin/activate > /dev/null
-    pip install requests==2.32.3 2>&1 | grep -v '[notice]'
+set -e
+python -m venv /opt/venv > /dev/null
+. /opt/venv/bin/activate > /dev/null
+pip install requests==2.32.3 2>&1 | grep -v '[notice]'
 
-            # Run the identity check script
-            python /opt/scripts/identity_check.py "{{ .user_identifier }}"
-    """,
+# Run the identity check script
+python /opt/scripts/identity_check.py "{{ .user_identifier }}"
+""",
     args=[
         Arg(
             name="user_identifier",

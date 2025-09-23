@@ -22,14 +22,14 @@ cmdb_query_tool = ServiceNowTool(
     name="servicenow_cmdb_query",
     description="Query ServiceNow CMDB for all servers linked to a chosen application, collecting server names/IDs, tags, and AWS account/region data",
     content="""
-    set -e
-    python -m venv /opt/venv > /dev/null
-    . /opt/venv/bin/activate > /dev/null
-    pip install requests==2.32.3 2>&1 | grep -v '[notice]'
+set -e
+python -m venv /opt/venv > /dev/null
+. /opt/venv/bin/activate > /dev/null
+pip install requests==2.32.3 2>&1 | grep -v '[notice]'
 
-            # Run the CMDB query script
-            python /opt/scripts/cmdb_query.py "{{ .application_id }}"
-    """,
+# Run the CMDB query script
+python /opt/scripts/cmdb_query.py "{{ .application_id }}"
+""",
     args=[
         Arg(
             name="application_id",
