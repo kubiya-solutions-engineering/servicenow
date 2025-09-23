@@ -41,7 +41,7 @@ class ServiceNowTool(Tool):
     type: str = "docker"
     mermaid: str = DEFAULT_MERMAID
     
-    def __init__(self, name, description, content, args=None, image="python:3.11-slim"):
+    def __init__(self, name, description, content, args=None, image="python:3.11-slim", **kwargs):
         # ServiceNow API setup and common imports
         servicenow_setup = """#!/usr/bin/env python3
 import requests
@@ -101,17 +101,23 @@ def format_output(data, title="ServiceNow API Response"):
         
         full_content = f"{servicenow_setup}\n{content}"
 
-        super().__init__(
-            name=name,
-            description=description,
-            content=full_content,
-            args=args or [],
-            image=image,
-            icon_url=SERVICENOW_ICON_URL,
-            type="docker",
-            env=["SERVICENOW_INSTANCE", "SERVICENOW_USERNAME"],
-            secrets=["SERVICENOW_PASSWORD"],
-        )
+        # Merge default ServiceNow config with any additional kwargs
+        init_kwargs = {
+            'name': name,
+            'description': description,
+            'content': full_content,
+            'args': args or [],
+            'image': image,
+            'icon_url': SERVICENOW_ICON_URL,
+            'type': "docker",
+            'env': ["SERVICENOW_INSTANCE", "SERVICENOW_USERNAME"],
+            'secrets': ["SERVICENOW_PASSWORD"],
+        }
+        
+        # Add any additional kwargs (like with_files, mermaid, etc.)
+        init_kwargs.update(kwargs)
+        
+        super().__init__(**init_kwargs)
 
     def get_args(self) -> List[Arg]:
         """Return the tool's arguments."""
