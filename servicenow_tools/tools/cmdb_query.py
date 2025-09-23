@@ -27,8 +27,8 @@ cmdb_query_tool = ServiceNowTool(
     . /opt/venv/bin/activate > /dev/null
     pip install requests==2.32.3 2>&1 | grep -v '[notice]'
 
-    # Run the CMDB query script
-    python /opt/scripts/cmdb_query.py
+            # Run the CMDB query script
+            python /opt/scripts/cmdb_query.py "{{ .application_id }}"
     """,
     args=[
         Arg(

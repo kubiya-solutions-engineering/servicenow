@@ -48,11 +48,13 @@ def make_request(endpoint, params=None, method='GET'):
         sys.exit(1)
 
 # Identity Check Tool
-user_identifier = os.getenv('user_identifier', '')
+import argparse
 
-if not user_identifier:
-    print("Error: user_identifier parameter is required")
-    sys.exit(1)
+parser = argparse.ArgumentParser(description='Check user identity in ServiceNow')
+parser.add_argument('user_identifier', help='User identifier to check (email, username, or sys_id)')
+args = parser.parse_args()
+
+user_identifier = args.user_identifier
 
 print(f"Checking identity for: {user_identifier}")
 print("")

@@ -27,8 +27,8 @@ apm_catalog_tool = ServiceNowTool(
     . /opt/venv/bin/activate > /dev/null
     pip install requests==2.32.3 2>&1 | grep -v '[notice]'
 
-    # Run the APM catalog script
-    python /opt/scripts/apm_catalog.py
+            # Run the APM catalog script
+            python /opt/scripts/apm_catalog.py "{{ .search_term }}"
     """,
     args=[
         Arg(

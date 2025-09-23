@@ -48,11 +48,13 @@ def make_request(endpoint, params=None, method='GET'):
         sys.exit(1)
 
 # APM Catalog Query Tool
-search_term = os.getenv('search_term', '')
+import argparse
 
-if not search_term:
-    print("Error: search_term parameter is required")
-    sys.exit(1)
+parser = argparse.ArgumentParser(description='Query ServiceNow APM catalog')
+parser.add_argument('search_term', help='Term to search for in APM catalog')
+args = parser.parse_args()
+
+search_term = args.search_term
 
 print(f"Searching APM catalog for: {search_term}")
 print("")

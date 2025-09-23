@@ -48,11 +48,13 @@ def make_request(endpoint, params=None, method='GET'):
         sys.exit(1)
 
 # CMDB Query Tool
-application_id = os.getenv('application_id', '')
+import argparse
 
-if not application_id:
-    print("Error: application_id parameter is required")
-    sys.exit(1)
+parser = argparse.ArgumentParser(description='Query ServiceNow CMDB for servers')
+parser.add_argument('application_id', help='Application sys_id or name to query servers for')
+args = parser.parse_args()
+
+application_id = args.application_id
 
 print(f"Querying CMDB for servers linked to application: {application_id}")
 print("")

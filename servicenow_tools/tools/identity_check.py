@@ -27,8 +27,8 @@ identity_check_tool = ServiceNowTool(
     . /opt/venv/bin/activate > /dev/null
     pip install requests==2.32.3 2>&1 | grep -v '[notice]'
 
-    # Run the identity check script
-    python /opt/scripts/identity_check.py
+            # Run the identity check script
+            python /opt/scripts/identity_check.py "{{ .user_identifier }}"
     """,
     args=[
         Arg(
