@@ -1,5 +1,7 @@
 from typing import List
-from servicenow_tools.tools.base import ServiceNowTool, Arg
+import sys
+from .base import ServiceNowTool, Arg
+from kubiya_sdk.tools.registry import tool_registry
 
 class IdentityCheckTool(ServiceNowTool):
     """Tool to check user identity against ServiceNow roles and entitlements."""
@@ -151,3 +153,12 @@ print("=== Identity Check Complete ===")
                 )
             ]
         )
+
+# Self-register the tool
+try:
+    tool = IdentityCheckTool()
+    tool_registry.register("servicenow", tool)
+    print(f"✅ Registered: {tool.name}")
+except Exception as e:
+    print(f"❌ Failed to register Identity Check tool: {str(e)}", file=sys.stderr)
+    raise

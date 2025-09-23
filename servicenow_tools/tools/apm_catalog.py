@@ -1,5 +1,7 @@
 from typing import List
-from servicenow_tools.tools.base import ServiceNowTool, Arg
+import sys
+from .base import ServiceNowTool, Arg
+from kubiya_sdk.tools.registry import tool_registry
 
 class APMCatalogTool(ServiceNowTool):
     """Tool to query ServiceNow APM catalog for applications and services."""
@@ -101,3 +103,12 @@ print("=== APM Catalog Search Complete ===")
                 )
             ]
         )
+
+# Self-register the tool
+try:
+    tool = APMCatalogTool()
+    tool_registry.register("servicenow", tool)
+    print(f"✅ Registered: {tool.name}")
+except Exception as e:
+    print(f"❌ Failed to register APM Catalog tool: {str(e)}", file=sys.stderr)
+    raise

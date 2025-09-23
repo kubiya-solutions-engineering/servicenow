@@ -1,5 +1,7 @@
 from typing import List
-from servicenow_tools.tools.base import ServiceNowTool, Arg
+import sys
+from .base import ServiceNowTool, Arg
+from kubiya_sdk.tools.registry import tool_registry
 
 class CMDBQueryTool(ServiceNowTool):
     """Tool to query ServiceNow CMDB for servers linked to applications."""
@@ -203,3 +205,12 @@ print("=== CMDB Query Complete ===")
                 )
             ]
         )
+
+# Self-register the tool
+try:
+    tool = CMDBQueryTool()
+    tool_registry.register("servicenow", tool)
+    print(f"✅ Registered: {tool.name}")
+except Exception as e:
+    print(f"❌ Failed to register CMDB Query tool: {str(e)}", file=sys.stderr)
+    raise
