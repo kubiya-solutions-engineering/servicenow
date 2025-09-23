@@ -41,83 +41,19 @@ class ServiceNowTool(Tool):
     type: str = "docker"
     mermaid: str = DEFAULT_MERMAID
     
-    def __init__(self, name, description, content, args=None, image="python:3.11-slim", **kwargs):
-        # ServiceNow API setup and common imports
-        servicenow_setup = """#!/usr/bin/env python3
-import requests
-import json
-import os
-import sys
-from urllib.parse import urljoin
-
-# ServiceNow configuration
-SN_INSTANCE = os.getenv('SERVICENOW_INSTANCE')
-SN_USERNAME = os.getenv('SERVICENOW_USERNAME')
-SN_PASSWORD = os.getenv('SERVICENOW_PASSWORD')
-# Using standard api/now endpoint - no version needed
-
-if not all([SN_INSTANCE, SN_USERNAME, SN_PASSWORD]):
-    print("Error: Missing required ServiceNow environment variables")
-    print("Required: SERVICENOW_INSTANCE, SERVICENOW_USERNAME, SERVICENOW_PASSWORD")
-    sys.exit(1)
-
-# Base URL for ServiceNow API
-BASE_URL = f"https://{SN_INSTANCE}.service-now.com/api/now"
-
-# Common headers for API requests
-HEADERS = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-}
-
-# Authentication
-AUTH = (SN_USERNAME, SN_PASSWORD)
-
-def make_request(endpoint, params=None, method='GET'):
-    \"\"\"Make authenticated request to ServiceNow API\"\"\"
-    url = urljoin(BASE_URL, endpoint)
-    
-    try:
-        if method == 'GET':
-            response = requests.get(url, auth=AUTH, headers=HEADERS, params=params)
-        elif method == 'POST':
-            response = requests.post(url, auth=AUTH, headers=HEADERS, json=params)
-        elif method == 'PUT':
-            response = requests.put(url, auth=AUTH, headers=HEADERS, json=params)
-        elif method == 'DELETE':
-            response = requests.delete(url, auth=AUTH, headers=HEADERS)
-        
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Error making request to {url}: {str(e)}")
-        sys.exit(1)
-
-def format_output(data, title="ServiceNow API Response"):
-    \"\"\"Format and print API response data\"\"\"
-    print(f"=== {title} ===")
-    print(json.dumps(data, indent=2))
-"""
-        
-        full_content = f"{servicenow_setup}\n{content}"
-
-        # Merge default ServiceNow config with any additional kwargs
-        init_kwargs = {
-            'name': name,
-            'description': description,
-            'content': full_content,
-            'args': args or [],
-            'image': image,
-            'icon_url': SERVICENOW_ICON_URL,
-            'type': "docker",
-            'env': ["SERVICENOW_INSTANCE", "SERVICENOW_USERNAME"],
-            'secrets': ["SERVICENOW_PASSWORD"],
-        }
-        
-        # Add any additional kwargs (like with_files, mermaid, etc.)
-        init_kwargs.update(kwargs)
-        
-        super().__init__(**init_kwargs)
+    def __init__(self, name, description, content, args=None, image="python:3.11-slim", with_files=None):
+        super().__init__(
+            name=name,
+            description=description,
+            content=content,
+            args=args or [],
+            image=image,
+            icon_url=SERVICENOW_ICON_URL,
+            type="docker",
+            env=["SERVICENOW_INSTANCE", "SERVICENOW_USERNAME"],
+            secrets=["SERVICENOW_PASSWORD"],
+            with_files=with_files
+        )
 
     def get_args(self) -> List[Arg]:
         """Return the tool's arguments."""
