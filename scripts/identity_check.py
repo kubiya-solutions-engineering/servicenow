@@ -97,14 +97,20 @@ try:
     if role_results.get('result'):
         # Get role names for each role sys_id
         for user_role in role_results['result']:
-            role_sys_id = user_role.get('role')
+            role_ref = user_role.get('role')
+            role_sys_id = None
+            if isinstance(role_ref, dict):
+                role_sys_id = role_ref.get('value')
+            elif isinstance(role_ref, str):
+                role_sys_id = role_ref
+
             if role_sys_id:
-                # Query sys_user_role table to get role name
                 role_name_params = {
                     'sysparm_query': f'sys_id={role_sys_id}',
                     'sysparm_fields': 'sys_id,name,description',
                     'sysparm_limit': 1
                 }
+
                 
                 role_name_results = make_request('sys_user_role', role_name_params)
                 if role_name_results.get('result'):
