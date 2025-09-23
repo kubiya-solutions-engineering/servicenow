@@ -25,7 +25,13 @@ AUTH = (SN_USERNAME, SN_PASSWORD)
 
 def make_request(table_name, params=None, method='GET'):
     """Make authenticated request to ServiceNow API"""
-    url = f"https://{SN_INSTANCE}.service-now.com/api/now/table/{table_name}"
+    # Handle both cases: instance name only or full URL
+    if SN_INSTANCE.startswith('http'):
+        base_url = SN_INSTANCE
+    else:
+        base_url = f"https://{SN_INSTANCE}.service-now.com"
+    
+    url = f"{base_url}/api/now/table/{table_name}"
     
     try:
         if method == 'GET':
