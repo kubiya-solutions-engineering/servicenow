@@ -1,5 +1,5 @@
 from typing import List
-from .base import ServiceNowTool, Arg
+from servicenow_tools.tools.base import ServiceNowTool, Arg
 
 class APMCatalogTool(ServiceNowTool):
     """Tool to query ServiceNow APM catalog for applications and services."""

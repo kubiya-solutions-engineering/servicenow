@@ -1,5 +1,5 @@
 from typing import List
-from .base import ServiceNowTool, Arg
+from servicenow_tools.tools.base import ServiceNowTool, Arg
 
 class IdentityCheckTool(ServiceNowTool):
     """Tool to check user identity against ServiceNow roles and entitlements."""

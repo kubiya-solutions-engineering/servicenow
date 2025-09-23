@@ -1,5 +1,5 @@
 from typing import List
-from .base import ServiceNowTool, Arg
+from servicenow_tools.tools.base import ServiceNowTool, Arg
 
 class CMDBQueryTool(ServiceNowTool):
     """Tool to query ServiceNow CMDB for servers linked to applications."""

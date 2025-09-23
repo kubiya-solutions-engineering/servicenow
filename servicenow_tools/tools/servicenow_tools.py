@@ -1,9 +1,9 @@
 from typing import List
 import sys
-from .base import ServiceNowTool, Arg
-from .apm_catalog import APMCatalogTool
-from .identity_check import IdentityCheckTool
-from .cmdb_query import CMDBQueryTool
+from servicenow_tools.tools.base import ServiceNowTool, Arg
+from servicenow_tools.tools.apm_catalog import APMCatalogTool
+from servicenow_tools.tools.identity_check import IdentityCheckTool
+from servicenow_tools.tools.cmdb_query import CMDBQueryTool
 from kubiya_sdk.tools.registry import tool_registry
 
 class ServiceNowTools:
