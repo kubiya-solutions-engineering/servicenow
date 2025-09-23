@@ -61,26 +61,21 @@ print("")
 
 # First, get the application details
 print("=== Application Details ===")
-# Enhanced search with multiple patterns for better matching
+# Simple search patterns for better matching
 search_patterns = [
     f'sys_id={application_id}',  # Exact sys_id match
     f'name={application_id}',    # Exact name match
     f'nameLIKE{application_id}', # Partial name match
-    f'nameLIKE{application_id.upper()}', # Case-insensitive partial match
-    f'nameLIKE{application_id.lower()}', # Case-insensitive partial match
-    f'nameLIKE{application_id.replace(" ", "%")}', # Handle spaces
-    f'nameLIKE{application_id.replace(" app", "%")}', # Handle "app" suffix
-    f'nameLIKE{application_id.replace(" application", "%")}', # Handle "application" suffix
 ]
 
 app_params = {
     'sysparm_query': '^OR'.join(search_patterns),
-    'sysparm_fields': 'sys_id,name,short_description,state,operational_status,owner',
-    'sysparm_limit': 10  # Increased limit to show multiple matches
+    'sysparm_fields': 'sys_id,name,short_description,operational_status,assigned_to,owned_by',
+    'sysparm_limit': 10
 }
 
 try:
-    app_results = make_request('table/apm_application', app_params)
+    app_results = make_request('table/cmdb_ci_appl', app_params)
     if not app_results.get('result'):
         print(f"❌ Application not found: {application_id}")
         print("💡 Suggestions:")
@@ -98,7 +93,9 @@ try:
         for i, app in enumerate(apps, 1):
             print(f"{i}. {app.get('name', 'N/A')} (ID: {app.get('sys_id', 'N/A')})")
             print(f"   Description: {app.get('short_description', 'N/A')}")
-            print(f"   State: {app.get('state', 'N/A')}, Status: {app.get('operational_status', 'N/A')}")
+            print(f"   Status: {app.get('operational_status', 'N/A')}")
+            print(f"   Assigned to: {app.get('assigned_to', 'N/A')}")
+            print(f"   Owned by: {app.get('owned_by', 'N/A')}")
             print("")
         
         print("❌ Multiple applications found. Please specify which one:")
@@ -112,8 +109,9 @@ try:
     app_sys_id = app.get('sys_id')
     print(f"✅ Found application: {app.get('name', 'N/A')} (ID: {app_sys_id})")
     print(f"Description: {app.get('short_description', 'N/A')}")
-    print(f"State: {app.get('state', 'N/A')}, Status: {app.get('operational_status', 'N/A')}")
-    print(f"Owner: {app.get('owner', 'N/A')}")
+    print(f"Status: {app.get('operational_status', 'N/A')}")
+    print(f"Assigned to: {app.get('assigned_to', 'N/A')}")
+    print(f"Owned by: {app.get('owned_by', 'N/A')}")
     print("")
     
 except Exception as e:
