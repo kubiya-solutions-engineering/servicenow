@@ -33,7 +33,7 @@ python /opt/scripts/cmdb_query.py "{{ .application_id }}"
     args=[
         Arg(
             name="application_id",
-            description="Application sys_id or name to query servers for",
+            description="Application identifier - can be application name (e.g., 'XYZ', 'MyApp') or exact sys_id (e.g., 'abc123def456'). The tool will search for matching applications and find their linked servers.",
             required=True,
         ),
     ],
