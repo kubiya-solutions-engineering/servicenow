@@ -24,15 +24,15 @@ HEADERS = {
 # Authentication
 AUTH = (SN_USERNAME, SN_PASSWORD)
 
+# Build base URL for ServiceNow instance
+if SN_INSTANCE.startswith('http'):
+    BASE_URL = SN_INSTANCE
+else:
+    BASE_URL = f"https://{SN_INSTANCE}.service-now.com"
+
 def make_request(table_name, params=None, method='GET'):
     """Make authenticated request to ServiceNow API"""
-    # Handle both cases: instance name only or full URL
-    if SN_INSTANCE.startswith('http'):
-        base_url = SN_INSTANCE
-    else:
-        base_url = f"https://{SN_INSTANCE}.service-now.com"
-    
-    url = f"{base_url}/api/now/table/{table_name}"
+    url = f"{BASE_URL}/api/now/table/{table_name}"
     
     try:
         if method == 'GET':
@@ -166,7 +166,7 @@ try:
             "incident": {
                 "number": incident_number,
                 "sys_id": incident_sys_id,
-                "url": f"{base_url}/incident.do?sys_id={incident_sys_id}"
+                "url": f"{BASE_URL}/incident.do?sys_id={incident_sys_id}"
             },
             "change_request": {
                 "number": change_result['result'].get('number') if change_result.get('result') else None,
