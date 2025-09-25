@@ -49,7 +49,7 @@ python /opt/scripts/audit_ticket.py --user "{{ .user }}" --action "{{ .action }}
         Arg(
             name="servers",
             description="Comma-separated list of server names/IDs that were affected by the operation",
-            required=True,
+            required=False,
         ),
         Arg(
             name="status",
