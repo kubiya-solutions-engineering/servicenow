@@ -18,13 +18,10 @@ if not all([SN_INSTANCE, SN_USERNAME, SN_PASSWORD]):
     print(json.dumps(error_response, indent=2))
     sys.exit(1)
 
-# Common headers for API requests
 HEADERS = {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
 }
-
-# Authentication
 AUTH = (SN_USERNAME, SN_PASSWORD)
 
 def make_request(table_name, params=None, method='GET'):
@@ -61,7 +58,7 @@ parser.add_argument('application_id', help='Application sys_id or name to query 
 args = parser.parse_args()
 application_id = args.application_id
 
-# Query cmdb_ci_appl to resolve application
+# Query cmdb_ci_appl
 app_params = {
     'sysparm_query': f'sys_id={application_id}^ORnameLIKE{application_id}',
     'sysparm_fields': 'sys_id,name,short_description,operational_status,assigned_to,owned_by',
@@ -85,43 +82,37 @@ try:
     app_sys_id = app.get('sys_id')
     servers = []
 
-    # --- First try: look for relationships ---
-    relationship_params = {
-        'sysparm_query': (
-            f'parent={app_sys_id}^type=Used by^OR'
-            f'parent={app_sys_id}^type=Uses^OR'
-            f'parent={app_sys_id}^type=Hosted on^OR'
-            f'parent={app_sys_id}^type=Hosts^OR'
-            f'parent={app_sys_id}^type=Runs on'
-        ),
+    # --- Try relationships first ---
+    rel_params = {
+        'sysparm_query': f'parent={app_sys_id}',
         'sysparm_fields': 'sys_id,parent,child,type',
         'sysparm_limit': 100
     }
-    relationship_results = make_request('cmdb_rel_ci', relationship_params)
+    rel_results = make_request('cmdb_rel_ci', rel_params)
 
-    if relationship_results.get('result'):
-        related_ci_ids = [rel.get('child') for rel in relationship_results['result'] if rel.get('child')]
-        if related_ci_ids:
-            server_query = '^OR'.join([f'sys_id={ci_id}' for ci_id in related_ci_ids])
+    if rel_results.get('result'):
+        child_ids = [rel['child']['value'] for rel in rel_results['result'] if rel.get('child')]
+        if child_ids:
+            query = '^OR'.join([f'sys_id={cid}' for cid in child_ids])
             server_params = {
-                'sysparm_query': f'class_name=cmdb_ci_server^{server_query}',
+                'sysparm_query': query,
                 'sysparm_fields': 'sys_id,name,host_name,ip_address,operational_status,os,u_aws_account,u_aws_region,u_aws_instance_id',
                 'sysparm_limit': 100
             }
-            server_results = make_request('cmdb_ci', server_params)
+            server_results = make_request('cmdb_ci_server', server_params)
             if server_results.get('result'):
                 servers.extend(server_results['result'])
 
-    # --- Fallback: direct reference via u_application ---
+    # --- Fallback: direct u_application reference ---
     if not servers:
-        direct_server_params = {
+        direct_params = {
             'sysparm_query': f'u_application={app_sys_id}',
             'sysparm_fields': 'sys_id,name,host_name,ip_address,operational_status,os,u_aws_account,u_aws_region,u_aws_instance_id',
             'sysparm_limit': 100
         }
-        direct_server_results = make_request('cmdb_ci_server', direct_server_params)
-        if direct_server_results.get('result'):
-            servers.extend(direct_server_results['result'])
+        direct_results = make_request('cmdb_ci_server', direct_params)
+        if direct_results.get('result'):
+            servers.extend(direct_results['result'])
 
     response = {
         "application_id": application_id,
