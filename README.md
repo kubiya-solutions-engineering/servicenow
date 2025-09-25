@@ -44,6 +44,29 @@ Queries the ServiceNow CMDB (Configuration Management Database) for all servers 
 - Retrieves AWS-specific information (account, region, instance details)
 - Gathers tags and custom attributes
 
+### 4. Audit Ticket (`servicenow_audit_ticket`)
+
+Creates ServiceNow audit tickets to track "who, what, when" for server operations and maintain compliance audit trails.
+
+**Parameters:**
+- `user` (required): User who initiated the action (email address or username)
+- `action` (required): Action performed (e.g., "server_startup", "server_shutdown", "application_deployment")
+- `application` (required): Application name or identifier that was affected
+- `servers` (required): Comma-separated list of server names/IDs that were affected
+- `status` (required): Operation status ("success", "failure", or "partial")
+- `details` (optional): Additional details about the operation
+- `teams_channel` (optional): Microsoft Teams channel where request originated
+- `aws_account` (optional): AWS account ID where servers are located
+- `aws_region` (optional): AWS region where servers are located
+
+**Features:**
+- Creates both incident and change request tickets for comprehensive audit trail
+- Tracks who initiated the action, what was done, and when it occurred
+- Includes detailed operation information (servers, status, AWS details)
+- Links Teams channel information for traceability
+- Provides direct URLs to created tickets
+- Supports compliance and audit requirements
+
 ## Configuration
 
 ### Environment Variables
@@ -70,6 +93,8 @@ The tools use basic authentication with your ServiceNow credentials and the stan
 - `cmdb_ci_aws_instance`
 - `cmdb_ci` (for general CMDB queries)
 - `cmdb_rel_ci` (for CMDB relationships)
+- `incident` (for creating audit incident tickets)
+- `change_request` (for creating audit change request tickets)
 
 ## Usage Examples
 
@@ -92,6 +117,23 @@ result = tool.execute({"user_identifier": "john.doe@company.com"})
 # Find all servers for an application
 tool = CMDBQueryTool()
 result = tool.execute({"application_id": "web-application-001"})
+```
+
+### Create Audit Ticket
+```python
+# Create audit ticket for server startup operation
+tool = AuditTicketTool()
+result = tool.execute({
+    "user": "john.doe@company.com",
+    "action": "server_startup",
+    "application": "web-application-001",
+    "servers": "web-server-01,web-server-02,web-server-03",
+    "status": "success",
+    "details": "All servers started successfully for production deployment",
+    "teams_channel": "devops-alerts",
+    "aws_account": "123456789012",
+    "aws_region": "us-east-1"
+})
 ```
 
 ## Architecture
