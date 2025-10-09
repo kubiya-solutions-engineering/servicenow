@@ -1,7 +1,7 @@
 from typing import List, Optional, Dict, Any
 from kubiya_sdk.tools import Tool, Arg, FileSpec
 
-SERVICENOW_ICON_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/ServiceNow_logo.svg/2560px-ServiceNow_logo.svg.png"
+SERVICENOW_ICON_URL = "https://cdn.brandfetch.io/idn6njzi5Z/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1677205846664"
 
 DEFAULT_MERMAID = """
 ```mermaid
